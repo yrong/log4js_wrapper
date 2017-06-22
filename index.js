@@ -21,7 +21,7 @@ module.exports = {
             category = 'default'
         }
         logger = log4js.getLogger(category)
-        logger.setLevel(level||logger_config.defaultLevel||'INFO')
+        logger.setLevel(level||logger_config?logger_config.defaultLevel:'INFO')
         return logger
     }
 }
