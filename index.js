@@ -1,26 +1,23 @@
 const path = require('path')
 const fs = require('fs')
 const log4js = require('log4js')
-const config = require('config')
+
+let options = {}
 
 module.exports = {
-    initialize: (options) => {
-        options = options || config.get('logger')
-        const logDir = options.logpath||path.join('./logs')
+    initialize: (log_options) => {
+        options = log_options
+        let logDir = options.logpath||path.join('./logs')
         if (!fs.existsSync(logDir)) {
             fs.mkdirSync(logDir)
         }
+        let logName = (process.env['NODE_NAME']||'api') + ".log"
+        options.appenders = [{"type": "file", "filename": logName, "maxLogSize": 20480, "numBackups": 5},{type:"console"}]
         log4js.configure(options, {cwd: logDir})
     },
     getLogger: (name,level) => {
-        let options = config.get('logger'),category
-        try{
-            category =  name||options.defaultCategory||config.get('name')
-        }catch(error){
-            category = 'default'
-        }
-        logger = log4js.getLogger(category)
-        logger.setLevel(level||options?options.defaultLevel:'INFO')
+        logger = log4js.getLogger(name||process.env['NODE_NAME'])
+        logger.setLevel(level||options.defaultLevel)
         return logger
     }
 }
