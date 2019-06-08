@@ -12,12 +12,15 @@ module.exports = {
             fs.mkdirSync(logDir)
         }
         let logName = (process.env['NODE_NAME']||'api') + ".log"
-        options.appenders = [{"type": "file", "filename": logName, "maxLogSize": 20480, "numBackups": 5},{type:"console"}]
-        log4js.configure(options, {cwd: logDir})
+        options.appenders = {file:{type: "file", filename: `${logDir}/${logName}`, maxLogSize: 20480, numBackups: 5},out:{type:"console"}}
+        options.categories = {
+            default: { appenders: [ 'file','out' ], level: options.defaultLevel }
+        }
+        log4js.configure(options)
     },
     getLogger: (name,level) => {
-        logger = log4js.getLogger(name||process.env['NODE_NAME']||'api')
-        logger.setLevel(level||options.defaultLevel)
+        const logger = log4js.getLogger(name||process.env['NODE_NAME']||'api')
+        logger.level = (level||options.defaultLevel)
         return logger
     }
 }
