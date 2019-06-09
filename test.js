@@ -10,7 +10,7 @@ describe("log4js-wrapper", () => {
         it("log", () => {
             const logger = log4js_wrapper.getLogger()
             should(logger.category).be.exactly(process.env['NODE_NAME']||'api')
-            logger.info('fuck')
+            logger.info('test')
         });
     });
 })
